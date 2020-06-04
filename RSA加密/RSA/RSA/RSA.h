@@ -35,6 +35,7 @@ class RSA
 public:
 	RSA()
 	{
+		// 初始化所有的密钥
 		GetKeys();
 	}
 	// 加密接口

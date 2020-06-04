@@ -18,9 +18,15 @@
     <ClInclude Include="RSA.h">
       <Filter>源文件</Filter>
     </ClInclude>
+    <ClInclude Include="BigInt.h">
+      <Filter>源文件</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="RSA.cpp">
+      <Filter>源文件</Filter>
+    </ClCompile>
+    <ClCompile Include="BigInt.cpp">
       <Filter>源文件</Filter>
     </ClCompile>
   </ItemGroup>

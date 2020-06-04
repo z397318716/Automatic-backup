@@ -1,4 +1,5 @@
 #include "RSA.h"
+#include "BigInt.h"
 
 // 密钥初始化
 void RSA::GetKeys()
@@ -15,7 +16,7 @@ void RSA::GetKeys()
 	_key._dkey = GetDkey(_key._ekey, orla);
 }
 // 加密
-DataType RSA::Ecrept(DataType data, DataType ekey, DataType pkey)
+DataType RSA::Ecrept(const DataType data, DataType ekey, DataType pkey)
 {
 	DataType Ai = data;
 	DataType msgE = 1;
@@ -33,16 +34,17 @@ DataType RSA::Ecrept(DataType data, DataType ekey, DataType pkey)
 	// return (DataType)(data, ekey) % pkey;
 }
 // 解密
-DataType RSA::Deecrpt(DataType data, DataType dkey, DataType pkey)
+DataType RSA::Deecrpt(const DataType data, DataType dkey, DataType pkey)
 {
 	DataType Ai = data;
 	DataType msgE = 1;
+	DataType key = dkey;
 	// data ^ dkey % pkey
-	while (dkey)
+	while (key)
 	{
-		if (dkey & 1)
+		if (key & 1)
 			msgE = (msgE * Ai) % pkey;
-		dkey >>= 1;
+		key >>= 1;
 		Ai = (Ai * Ai) % pkey;
 	}
 	return msgE;
@@ -55,7 +57,7 @@ DataType RSA::GetPrime()
 	DataType prime;
 	while (true)
 	{
-		prime = rand() % 1000 + 2;	// 2 ~ 1001
+		prime = rand() % 100 + 2;	// 2 ~ 1001
 		while (!RSA::IsPrime(prime))
 		{
 			prime++;	// 如果每次都取随机数判断, 效率太低
@@ -174,8 +176,8 @@ void RSA::Ecrept(const char* filename, const char* fileout)
 // 解密接口
 void RSA::Deecrpt(const char* filename, const char* fileout)
 {
-	std::ifstream fin(filename, std::fstream::binary);
-	std::ofstream fout(fileout, std::fstream::binary);
+	std::ifstream fin(filename, std::ifstream::binary);
+	std::ofstream fout(fileout, std::ofstream::binary);
 	if (!fin.is_open())
 	{
 		perror("output file open failed!");
@@ -288,9 +290,28 @@ void Test()
 	//}
 	////fout.close();
 	////test.GetKeys();
-	test.Ecrept("test4.txt", "test4e.txt");
-	test.Deecrpt("test4e.txt", "test4de.txt");
 
+	/*test.Ecrept("test4.txt", "test4e.txt");
+	test.Deecrpt("test4e.txt", "test4de.txt");*/
+
+	std::string s1("1011");
+	std::string s2("22");
+	std::string s3("44444");
+
+	std::string s4;
+	std::string s5;
+	std::string s6;
+	BigInt big;
+	s4 = big.add(s1, s2);
+	s5 = big.add(s1, s3);
+	s6 = big.add(s2, s3);
+	int a = 12324343;
+	int b = 67678789;
+	cout << a + b << "\n";
+	cout << big.add("12324343", "67678789");
+	cout << s4 << endl;
+	cout << s5 << endl;
+	cout << s6 << endl;
 }
 int main()
 {
