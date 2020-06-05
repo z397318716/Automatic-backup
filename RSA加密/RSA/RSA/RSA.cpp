@@ -294,15 +294,29 @@ void Test()
 	/*test.Ecrept("test4.txt", "test4e.txt");
 	test.Deecrpt("test4e.txt", "test4de.txt");*/
 
-	std::string s1("1011");
+	std::string s1("10");
 	std::string s2("22");
 	std::string s3("44444");
+	std::string s7("99");
 
 	std::string s4;
 	std::string s5;
 	std::string s6;
 	BigInt big;
-	s4 = big.add(s1, s2);
+
+	s4 = big.mul(s1, s2);
+	s5 = big.mul(s1, s7);
+	cout << s4 << endl;
+	cout << s5 << endl;
+	cout << 9999999 * 1011 << endl;
+
+	/*s4 = big.sub(s1, s2);
+	s5 = big.sub(s7, s1);
+	cout << s4 << endl;
+	cout << s5 << endl;
+	cout << 487652786384756872 - 1011 << endl;*/
+
+	/*s4 = big.add(s1, s2);
 	s5 = big.add(s1, s3);
 	s6 = big.add(s2, s3);
 	int a = 12324343;
@@ -311,7 +325,7 @@ void Test()
 	cout << big.add("12324343", "67678789");
 	cout << s4 << endl;
 	cout << s5 << endl;
-	cout << s6 << endl;
+	cout << s6 << endl;*/
 }
 int main()
 {

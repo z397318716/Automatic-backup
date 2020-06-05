@@ -1,6 +1,19 @@
 #include "BigInt.h"
 
 
+// 去掉大数 高位无效的0
+std::string Remove_0(std::string num)
+{
+	for (int i = 0; i < num.length(); i++)
+	{
+		if (num[i] != '0')
+		{
+			num = num.substr(i, num.length() - i);
+			break;
+		}
+	}
+	return num;
+}
 // 大数加法, 模拟加法过程
 std::string BigInt::add(std::string num1, std::string num2)
 {
@@ -29,14 +42,8 @@ std::string BigInt::add(std::string num1, std::string num2)
 	if (tag == 1)
 		sum.insert(0, 1, '1');
 
-	for (int i = 0; i < sum.length(); i++)
-	{
-		if (sum[i] != '0')
-		{
-			sum = sum.substr(i, sum.length() - i);
-			break;
-		}
-	}
+	// 去掉高位无效的 0
+	sum = Remove_0(sum);
 	return sum;
 }
 
@@ -54,24 +61,13 @@ std::string BigInt::sub(std::string &num1, std::string &num2)
 	2. 判断被减数的对应位是否大于减数的对应位, 如果大于, 需要借位, 如果发生借位, 需要更新高位的值
 	3. 进行对应位的减操作
 */
-	for (int i = 0; i < num1.length(); i++)
-	{
-		if (num1[i] != '0')
-		{
-			num1 = num1.substr(i, num1.length() - i);
-			break;
-		}
-	}
-	for (int i = 0; i < num2.length(); i++)
-	{
-		if (num2[i] != '0')
-		{
-			num2 = num2.substr(i, num2.length() - i);
-			break;
-		}
-	}
+	// 去掉高无效位的0
+	num1 = Remove_0(num1);
+	num2 = Remove_0(num2);
+
 	std::string high;
 	std::string low;
+	// 较长的数大
 	if (num1.length() > num2.length())
 	{
 		high = num1;
@@ -104,5 +100,75 @@ std::string BigInt::sub(std::string &num1, std::string &num2)
 		if (high.size() == 0)
 			return "0";
 	}
+	// 正负号标记, 如果 num1 > num2 为正, 否则为负
+	bool tag = true;
+	if (num1 == low)
+		tag = false;
+
+	// 将两个大数, 通过高位补0 的方式, 变成一样长
+	int differencelength = high.length() - low.length();
+	low.insert(0, differencelength, '0');
+	std::string result;
+	result.resize(high.size());
+	for (int i = high.size() - 1; i >= 0; --i)
+	{
+		int tmp = (high[i] - '0') - (low[i] - '0');
+		// 当前位不够减, 向上一位 借1
+		if (tmp < 0)
+		{
+			high[i - 1] -= 1;
+			tmp += 10;
+		}
+		result[i] = tmp + '0';
+	}
 	
+	// 去掉result 高位无效的0
+	result = Remove_0(result);
+	// 如果是负数, 添加符号
+	if (!tag)
+		result.insert(0, 1,'-');
+	return result;
+}
+// 大数乘法---模拟乘法运算操作
+std::string BigInt::mul(std::string &num1, std::string &num2)
+{
+	// 去掉高位无效的 0 
+	num1 = Remove_0(num1);
+	num2 = Remove_0(num2);
+	if (num1.size() > num2.size())
+	{
+		swap(num1, num2);
+	}
+	std::string res("0");
+	int tag = 0;
+	for (int i = num1.size() - 1; i >= 0; --i)
+	{
+		std::string tmp = num2;
+		
+		for (int j = num2.size() - 1; i >= 0; --i)
+		{
+			int n = (num2[j] - '0') * (num1[i] - '0');
+			// 当前位的值
+			int g = n % 10 + tag;
+			// 进位值更新
+			tag = n / 10;
+			if (g < 10)
+			{
+				tmp[j] = g + '0';
+			}
+			else
+			{
+				tmp[j] = g % 10 + '0';
+				tag++;
+			}
+		}
+		if (tag != 0)
+			tmp.insert(0, 1, tag + '0');
+		tmp.append(num1.size() - 1 - i, '0');
+		res = add(res, tmp);
+	}
+
+	res = Remove_0(res);
+
+	return res;
 }
