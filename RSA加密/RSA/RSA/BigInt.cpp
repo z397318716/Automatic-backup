@@ -172,3 +172,6 @@ std::string BigInt::mul(std::string &num1, std::string &num2)
 
 	return res;
 }
+
+// 大数除法---模拟除法运算操作
+
