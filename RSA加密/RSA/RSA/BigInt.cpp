@@ -15,7 +15,7 @@ std::string Remove_0(std::string num)
 	return num;
 }
 // 大数加法, 模拟加法过程
-std::string BigInt::add(std::string num1, std::string num2)
+std::string BigInt::add(std::string &num1, std::string &num2)
 {
 	// sum为存放最终结果的字符串, 此处直接使其等于较长的字符串,最终的结果覆盖掉现在的值
 	std::string sum = (num1.size() > num2.size()) ? num1 : num2;
@@ -139,31 +139,27 @@ std::string BigInt::mul(std::string &num1, std::string &num2)
 	{
 		swap(num1, num2);
 	}
-	std::string res("0");
+	std::string res = "0";
 	int tag = 0;
 	for (int i = num1.size() - 1; i >= 0; --i)
 	{
 		std::string tmp = num2;
 		
-		for (int j = num2.size() - 1; i >= 0; --i)
+		for (int j = num2.size() - 1; j >= 0; --j)
 		{
-			int n = (num2[j] - '0') * (num1[i] - '0');
+			int n = (num2[j] - '0') * (num1[i] - '0') + tag;
 			// 当前位的值
-			int g = n % 10 + tag;
+			int g = n % 10 ;
 			// 进位值更新
 			tag = n / 10;
-			if (g < 10)
-			{
-				tmp[j] = g + '0';
-			}
-			else
-			{
-				tmp[j] = g % 10 + '0';
-				tag++;
-			}
+			tmp[j] = g + '0';
+		
 		}
 		if (tag != 0)
-			tmp.insert(0, 1, tag + '0');
+		{
+			tmp.insert(0, 1, (tag + '0'));
+			tag = 0;
+		}
 		tmp.append(num1.size() - 1 - i, '0');
 		res = add(res, tmp);
 	}
@@ -174,4 +170,124 @@ std::string BigInt::mul(std::string &num1, std::string &num2)
 }
 
 // 大数除法---模拟除法运算操作
+// 除法用减法来实现
+/*
+	如果直接循环开始减, 效率可能会十分低下-----比如   2400 / 2 循环的次数过多,
+	可以考虑  把 除数与被除数的位数改为一致的, 2400 / 2000 ---最大减被除数的位差倍, 最小减被除数的大小
 
+*/
+std::pair<std::string, std::string> BigInt::dev(std::string &num1, std::string &num2)
+{
+	// 默认使用 num1 / num2
+	std::pair<std::string, std::string> result;
+	// 去掉高位的0
+	num1 = Remove_0(num1);
+	num2 = Remove_0(num2);
+	int len1 = num1.size();
+	int len2 = num2.size();
+	if (len1 < len2)
+		return make_pair("0", num2);
+
+	int lengthdiff = len1 - len2;
+	if (lengthdiff > 1)
+	{
+		//num2.insert(len2, lengthdiff, '0');
+		num2.append(lengthdiff, '0');
+	}
+	// 此时,记录 num2 补0 后的长度
+	int newlen2 = len1;
+
+	// 余数初始化
+	result.second = num1;
+	char tmp = ' ';
+	for (int i = 0; i <= lengthdiff; ++i)
+	{
+		// 记录减法执行的次数
+		char count = '0';
+		while (true)
+		{
+			if (less(result.second, num2))
+				break;
+			result.second = sub(result.second, num2);
+			++count;
+		}
+		result.first += count;
+		
+		// 除数减少10倍
+		tmp = *(num2.rbegin());
+		num2.pop_back();
+	}
+	num2.push_back(tmp);
+	// 删除前置的0
+	result.first = Remove_0(result.first);
+	return result;
+
+}
+
+bool BigInt::less(std::string &num1, std::string &num2)
+{
+	// 去掉高位无效的 0
+	Remove_0(num1);
+	Remove_0(num2);
+	if (num1.size() < num2.size())
+		return true;
+	if (num1.size() > num2.size())
+		return false;
+
+	return num1 < num2;
+}
+BigInt BigInt::operator+(BigInt & bi)
+{
+	std::string ret = add(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt BigInt::operator-(BigInt & bi)
+{
+	std::string ret = sub(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt BigInt::operator*(BigInt & bi)
+{
+	std::string ret = mul(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt BigInt::operator/(BigInt & bi)
+{
+	std::pair<std::string, std::string> ret = dev(_number, bi._number);
+	return BigInt(ret.first);
+}
+BigInt BigInt::operator % (BigInt & bi)
+{
+	std::pair<std::string, std::string> ret = dev(_number, bi._number);
+	return BigInt(ret.second);
+}
+std::ostream &operator<<(std::ostream &_cout, BigInt &bi)
+{
+	_cout << bi._number << std::endl;
+	return _cout;
+}
+BigInt& BigInt::operator+=(BigInt &bi)
+{
+	std::string ret = add(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt &BigInt::operator-=(BigInt &bi)
+{
+	std::string ret = sub(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt &BigInt::operator*=(BigInt &bi)
+{
+	std::string ret = mul(_number, bi._number);
+	return BigInt(ret);
+}
+BigInt &BigInt::operator/=(BigInt &bi)
+{
+	std::string ret = dev(_number, bi._number).first;
+	return BigInt(ret);
+}
+BigInt &BigInt::operator%=(BigInt &bi)
+{
+	std::string ret = dev(_number, bi._number).second;
+	return BigInt(ret);
+}

@@ -193,7 +193,7 @@ void RSA::Deecrpt(const char* filename, const char* fileout)
 		curbytes /= sizeof(DataType);
 		for (int i = 0; i < curbytes; ++i)
 		{
-			bufferout[i] = Deecrpt(buffer[i], _key._dkey, _key._pkey);
+			bufferout[i] = (char)Deecrpt(buffer[i], _key._dkey, _key._pkey);
 		}
 		fout.write(bufferout, curbytes);
 	}
@@ -203,7 +203,7 @@ void RSA::Deecrpt(const char* filename, const char* fileout)
 	fin.close();
 }
 
-void Test()
+void BigInt::Test()
 {
 	RSA test;
 	using std::cout;
@@ -291,24 +291,44 @@ void Test()
 	////fout.close();
 	////test.GetKeys();
 
-	/*test.Ecrept("test4.txt", "test4e.txt");
-	test.Deecrpt("test4e.txt", "test4de.txt");*/
+	test.Ecrept("test4.txt", "test4e.txt");
+	test.Deecrpt("test4e.txt", "test4de.txt");
 
 	std::string s1("10");
 	std::string s2("22");
 	std::string s3("44444");
-	std::string s7("99");
+	std::string s7("97");
 
 	std::string s4;
 	std::string s5;
 	std::string s6;
 	BigInt big;
+	std::pair<std::string, std::string> p1;
+	//p1 = big.dev(s3, s7);
+	s4 = big.dev(s3, s7).first;
+	s5 = big.dev(s3, s7).second;
+	cout << s4 << '\n' << s5 << endl;
+	cout << 44444 / 97 << endl;
+	cout << 44444 % 97 << endl;
 
-	s4 = big.mul(s1, s2);
+	std::string aa("23457646");
+	std::string bb("45645");
+	BigInt a(aa);
+	BigInt b(bb);
+	cout << a/b << '\n' << b << endl;
+	
+	
+
+	/*s4 = big.mul(s1, s2);
 	s5 = big.mul(s1, s7);
 	cout << s4 << endl;
 	cout << s5 << endl;
-	cout << 9999999 * 1011 << endl;
+	s4 = "99999";
+	s5 = "54321";
+	cout << big.mul(s4, s5) << endl;
+	cout << 99999 * 54321 << endl;*/
+
+	
 
 	/*s4 = big.sub(s1, s2);
 	s5 = big.sub(s7, s1);
@@ -327,11 +347,26 @@ void Test()
 	cout << s5 << endl;
 	cout << s6 << endl;*/
 }
+void TestBoost()
+{
+	using std::cout;
+	using std::endl;
+	boost::multiprecision::cpp_int ci;
+	
+	ci = 1024;
+	// ³£Á¿Ì«´ó
+	//ci = 5646461465465116540132165451103131;
+	std::string num = "448946465487892314846516354";
+	boost::multiprecision::cpp_int si(num);
+	cout << si << endl;
+
+}
 int main()
 {
-	Test();
+	BigInt test;
+	test.Test();
 
-
+	//TestBoost();
 	system("pause");
 	return 0;
 }

@@ -6,9 +6,11 @@
 #include<cstdlib>
 #include<windows.h>
 #include<fstream>
+#include<boost/multiprecision/cpp_int.hpp>
 
 #define NUMBER 256
-typedef long DataType;
+//typedef long DataType;
+typedef boost::multiprecision::int1024_t DataType;
 
 
 
