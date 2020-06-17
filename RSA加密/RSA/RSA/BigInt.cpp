@@ -291,3 +291,33 @@ BigInt &BigInt::operator%=(BigInt &bi)
 	std::string ret = dev(_number, bi._number).second;
 	return BigInt(ret);
 }
+
+// ret++
+BigInt &BigInt::operator++(int)
+{
+	std::string tmp = "1";
+	std::string ret = add(_number, tmp);
+	return BigInt(ret);
+}
+// ret--
+BigInt &BigInt::operator--(int)
+{
+	BigInt sum = *this;
+	std::string tmp = "1";
+	std::string ret = sub(sum._number, tmp);
+	return BigInt(ret);
+}
+// ++ret
+BigInt &BigInt::operator++()
+{
+	std::string tmp = "1";
+	std::string ret = add(_number, tmp);
+	return *this;
+}
+// --ret
+BigInt &BigInt::operator--()
+{
+	std::string tmp = "1";
+	std::string ret = sub(_number, tmp);
+	return *this;
+}

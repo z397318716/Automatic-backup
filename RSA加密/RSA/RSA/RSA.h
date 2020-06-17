@@ -7,11 +7,14 @@
 #include<windows.h>
 #include<fstream>
 #include<boost/multiprecision/cpp_int.hpp>
+#include<boost/multiprecision/random.hpp>
+#include<boost/multiprecision/miller_rabin.hpp>
 
 #define NUMBER 256
 //typedef long DataType;
 typedef boost::multiprecision::int1024_t DataType;
-
+using std::cout;
+using std::endl;
 
 
 struct Key
@@ -59,6 +62,8 @@ public:
 	DataType GetGcd(DataType data1, DataType data2);
 	// 判断一个数是否是素数
 	bool IsPrime(DataType data);
+	// 判断一个大数是否为素数
+	bool IsBigIntPrime(DataType data);
 	// 对数据加密
 	DataType Ecrept(DataType data, DataType ekey, DataType pkey);
 	// 对数据解密

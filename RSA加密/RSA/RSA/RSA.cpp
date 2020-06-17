@@ -6,14 +6,19 @@ void RSA::GetKeys()
 {
 	DataType prime1 = GetPrime();
 	DataType prime2 = GetPrime();
+	cout << "2prime2 finish" << endl;
 	while (prime2 == prime1)
 	{
 		prime2 = GetPrime();
 	}
 	DataType orla = GetOrla(prime1, prime2);
+	cout << "orla finish" << endl;
 	_key._pkey = GetPkey(prime1, prime2);
+	cout << "pkey finish" << endl;
 	_key._ekey = GetEkey(orla);
+	cout << "ekey finish" << endl;
 	_key._dkey = GetDkey(_key._ekey, orla);
+	cout << "dkey finish" << endl;
 }
 // 加密
 DataType RSA::Ecrept(const DataType data, DataType ekey, DataType pkey)
@@ -51,21 +56,49 @@ DataType RSA::Deecrpt(const DataType data, DataType dkey, DataType pkey)
 	//return (DataType)pow(data, dkey) % pkey;
 }
 
+// 生成素数
 DataType RSA::GetPrime()
 {
-	srand(time(NULL));
+	//srand(time(NULL));
 	DataType prime;
+	boost::random::mt19937_64 gen(time(NULL));
+	boost::random::uniform_int_distribution<DataType> dist(0, DataType(1) << 25);
+	cout << "get prime" << endl;
+	prime = dist(gen);
 	while (true)
 	{
-		prime = rand() % 100 + 2;	// 2 ~ 1001
-		while (!RSA::IsPrime(prime))
+		//cout << "get prime" << endl;
+		//prime = rand() % 100 + 2;	// 2 ~ 1001
+		//prime = dist(gen);
+		if (!RSA::IsBigIntPrime(prime))
 		{
-			prime++;	// 如果每次都取随机数判断, 效率太低
-		}
-		break;
+
+			// 大数素性 检测 太慢, 效率十分低下
+			prime = dist(gen);
+			//prime++;	// 如果每次都取随机数判断, 效率太低
+			//cout << "get prime failed" << endl;
+		}  else
+			break;
 	}
+	cout << "get primes finish" << endl;
 	return prime;
 }
+// boost--大数素性检测
+
+bool RSA::IsBigIntPrime(DataType data)
+{
+	// #include<boost/multiprecision/miller_rabin.hpp>
+	boost::random::mt11213b gen(time(nullptr));
+	if (miller_rabin_test(data, 25, gen))
+	{
+		if (miller_rabin_test((data - 1) / 2, 25, gen))
+		{
+			return true;
+		}
+	}
+	return false;
+}
+// 普通数素性检测
 bool RSA::IsPrime(DataType data)
 {
 	if (data < 2)
@@ -91,13 +124,26 @@ DataType RSA::GetOrla(DataType prime1, DataType prime2)
  // 加密密钥 e     1 < e < orla
 DataType RSA::GetEkey(DataType orla)
 {
-	DataType ekey = orla - 1;
+	/*DataType ekey = orla - 1;
 	for (; ekey > 1; ekey--)
 	{
-		if (1 == RSA::GetGcd(ekey, orla))
-			break;
+	if (1 == RSA::GetGcd(ekey, orla))
+	break;
 	}
-	return ekey;
+	return ekey;*/
+	
+	DataType ekey;
+	// 随机大数时间种子
+	boost::random::mt19937_64 gen(time(nullptr));
+	// 生成随机大数 范围    2 <  < orla
+	boost::random::uniform_int_distribution<DataType> dist(2, orla);
+	
+	while (true)
+	{
+		ekey = dist(gen);
+		if (1 == RSA::GetGcd(ekey, orla))
+			return ekey;
+	}
 }
 // 解密密钥 d
 DataType RSA::GetDkey(DataType ekey, DataType orla)
@@ -109,6 +155,9 @@ DataType RSA::GetDkey(DataType ekey, DataType orla)
 			return dkey;
 		++dkey;
 	}
+
+	BigInt b1;
+	DataType dkey = b1.
 }
 // 获取两个数的最大公约数
 /*
@@ -294,28 +343,28 @@ void BigInt::Test()
 	test.Ecrept("test4.txt", "test4e.txt");
 	test.Deecrpt("test4e.txt", "test4de.txt");
 
-	std::string s1("10");
-	std::string s2("22");
-	std::string s3("44444");
-	std::string s7("97");
+	//std::string s1("10");
+	//std::string s2("22");
+	//std::string s3("44444");
+	//std::string s7("97");
 
-	std::string s4;
-	std::string s5;
-	std::string s6;
-	BigInt big;
-	std::pair<std::string, std::string> p1;
-	//p1 = big.dev(s3, s7);
-	s4 = big.dev(s3, s7).first;
-	s5 = big.dev(s3, s7).second;
-	cout << s4 << '\n' << s5 << endl;
-	cout << 44444 / 97 << endl;
-	cout << 44444 % 97 << endl;
+	//std::string s4;
+	//std::string s5;
+	//std::string s6;
+	//BigInt big;
+	//std::pair<std::string, std::string> p1;
+	////p1 = big.dev(s3, s7);
+	//s4 = big.dev(s3, s7).first;
+	//s5 = big.dev(s3, s7).second;
+	//cout << s4 << '\n' << s5 << endl;
+	//cout << 44444 / 97 << endl;
+	//cout << 44444 % 97 << endl;
 
-	std::string aa("23457646");
-	std::string bb("45645");
-	BigInt a(aa);
-	BigInt b(bb);
-	cout << a/b << '\n' << b << endl;
+	//std::string aa("23457646");
+	//std::string bb("45645");
+	//BigInt a(aa);
+	//BigInt b(bb);
+	//cout << a/b << '\n' << b << endl;
 	
 	
 
@@ -360,12 +409,22 @@ void TestBoost()
 	boost::multiprecision::cpp_int si(num);
 	cout << si << endl;
 
+	boost::random::mt19937_64 gen(time(NULL));
+	boost::random::uniform_int_distribution<DataType> dist(0, (DataType)1<<1023);
+
+	for (int i = 0; i < 10; i++)
+	{
+		DataType num = dist(gen);
+		cout << num << endl;
+	}
+
 }
 int main()
 {
 	BigInt test;
 	test.Test();
 
+	
 	//TestBoost();
 	system("pause");
 	return 0;

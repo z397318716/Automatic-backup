@@ -1,13 +1,12 @@
-﻿生成启动时间为 2020/6/14 18:08:59。
+﻿生成启动时间为 2020/6/17 10:26:12。
      1>项目“E:\SHARE\Project\RSA加密\RSA\RSA\RSA.vcxproj”在节点 2 上(Build 个目标)。
      1>ClCompile:
          E:\vs2013\VC\bin\CL.exe /c /IE:\boost_1_57_0 /ZI /nologo /W3 /WX- /sdl /Od /Oy- /D _MBCS /Gm /EHsc /RTC1 /MDd /GS /fp:precise /Zc:wchar_t /Zc:forScope /Fo"Debug\\" /Fd"Debug\vc120.pdb" /Gd /TP /analyze- /errorReport:prompt RSA.cpp
          RSA.cpp
      1>e:\boost_1_57_0\boost\format\alt_sstream_impl.hpp : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
-     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(56): warning C4244: “参数”: 从“time_t”转换到“unsigned int”，可能丢失数据
-     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(161): warning C4244: “初始化”: 从“std::streamsize”转换到“int”，可能丢失数据
-     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(192): warning C4244: “初始化”: 从“std::streamsize”转换到“int”，可能丢失数据
-     1>cl : 命令行 warning D9028: 最小重新生成失败，正在转换为标准生成
+     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(91): warning C4244: “参数”: 从“time_t”转换到“const uint32_t”，可能丢失数据
+     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(207): warning C4244: “初始化”: 从“std::streamsize”转换到“int”，可能丢失数据
+     1>e:\share\project\rsa加密\rsa\rsa\rsa.cpp(238): warning C4244: “初始化”: 从“std::streamsize”转换到“int”，可能丢失数据
        Link:
          E:\vs2013\VC\bin\link.exe /ERRORREPORT:PROMPT /OUT:"E:\SHARE\Project\RSA加密\RSA\Debug\RSA.exe" /INCREMENTAL /NOLOGO kernel32.lib user32.lib gdi32.lib winspool.lib comdlg32.lib advapi32.lib shell32.lib ole32.lib oleaut32.lib uuid.lib odbc32.lib odbccp32.lib /MANIFEST /MANIFESTUAC:"level='asInvoker' uiAccess='false'" /manifest:embed /DEBUG /PDB:"E:\SHARE\Project\RSA加密\RSA\Debug\RSA.pdb" /TLBID:1 /DYNAMICBASE /NXCOMPAT /IMPLIB:"E:\SHARE\Project\RSA加密\RSA\Debug\RSA.lib" /MACHINE:X86 Debug\BigInt.obj
          Debug\RSA.obj
@@ -16,4 +15,4 @@
 
 生成成功。
 
-已用时间 00:00:05.48
+已用时间 00:00:05.98
