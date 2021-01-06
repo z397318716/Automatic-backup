@@ -1,0 +1,5 @@
+1. 需要下载 boost库和 zlib库
+  sudo yum install boost
+  sudo yum install boost-devel
+  sudo yum install zlib
+  sudo yum install zlib-devel

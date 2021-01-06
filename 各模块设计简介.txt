@@ -1,0 +1,65 @@
+代码模块的设计
+  服务端:
+    1.非热点文件的压缩解压缩模块-------基于zlib封装实现非热点文件的压缩/解压缩
+      (1). 文件是否是热点文件的判断---根据文件属性中的最后一次访问时间[如果当前时间减去文件最后一次访问时间 > 我们设置的基准值   则认为该文件是非热点文件]
+      (2). 文件的压缩功能---将源文件进行压缩存储,保留压缩文件,删除源文件---更新数据管理
+      (3). 文件的解压缩功能---先将文件解压缩,得到源文件,删除压缩文件
+class CompressUtil
+{
+  // 这是一个工具类,想外提供热点文件的判断以及文件的压缩解压缩功能即可
+
+  public:
+    static bool Compress(const std::string &src_name, const std::string &dst_name);; // 压缩(源文件名称, 压缩包名称)
+    static bool UnCompress(const std::string &src_name, const std::string &dst_name); // 解压缩(压缩包名称,源文件名称)
+}
+class NonHotCompress
+{
+  // 每隔一段时间检测哪些未压缩文件是非热点文件,然后进行压缩
+
+  public:
+    bool Start()
+    {
+      // 循环每隔一段时间:1.获取未压缩文件列表 2. 逐个判断是否是热点文件 3.若是非热点文件,则压缩 4. 更新数据
+    } 
+    bool FilelsHot(const std::string &filename); // 判断文件是否是热点文件
+  private:
+    std::string _gz_dir; // 压缩文件的存放路径
+}
+    2.数据管理模块-----基于STL容器-unordered_map实现简单的数据管理(改进使用轻量级数据库 sqlite实现)
+class DataManage
+{
+  public:
+    bool IsCompressed(const std::string &filename); // 判断文件是否已经被压缩
+    bool NonCompressed(std::vector<std::string> *list); // 通过list返回当前没有被压缩的文件名称列表
+    bool Insert(const std::string &src, const std::string &dst); // 插入文件数据对于备份两个名称都是源文件,对于压缩src-源文件 ,dst-压缩包
+    bool GetList(std::vector<std::string> *list); // 获取所有文件名称
+    bool Storage(); // 数据改变时将数据持久化存储到文件中
+    bool Load(); // 服务端启动时从文件中加载所有的文件信息到内存中
+  private:
+    std::string _back_file; // 这个文件用于持久化存储文件数据信息
+    std::unordered_map<std::string, std::string> _file_list; // 这个是内存中数据管理
+    pthread_rwlock_t_rwlock; // 使用读写锁保护_file_list的操作---读共享,写互斥
+}
+    3.网络通信模块
+      功能: (1). 文件上传 (2). 列表获取 (3). 文件下载
+      1> 搭建http服务器---使用httplib库完成(这个库提供简单的接口实现搭建http服务器/客户端)
+      2> 只需要完成以下三个业务功能接口就可以了
+        1. 文件上传请求处理接口
+        2. 文件列表请求处理接口
+        3. 文件下载请求处理接口
+class HttpServer
+{
+  public:
+    bool Start(); // 开始搭建HTTP服务器, 进行业务处理
+  private:
+    static void FileUpLoad(const httplib::Request &req; httplib::Response &rsp);  // 文件上传请求的回调处理函数
+    static void FileList(const httplib::Request &req, httplib::Response &rsp);  // 文件列表请求的回调处理函数
+    static void FileDownLoad(const httplib::Request &req, httplib::Response &rsp);  // 文件下载请求的回调处理函数
+  private:
+    std::string _file_dir;  // 上传文件的存放路径
+    httplib::Server _server; // 搭建http服务器的对象
+}
+  客户端:
+    1.数据管理模块
+    2.目录监控模块
+    3.文件备份模块
